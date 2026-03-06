@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Web Portal</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f0f10;
+        --panel: #17171a;
+        --panel-2: #1f1f23;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --accent: #e9753b;
+        --border: #2a2a31;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        background: radial-gradient(circle at top, #1a1a1f, var(--bg) 45%);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 24px auto;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--panel);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #111114;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 18px rgba(233, 117, 59, 0.8);
+      }
+
+      .muted { color: var(--muted); font-size: 0.92rem; }
+
+      .controls { display: flex; gap: 8px; }
+
+      button, .btn {
+        border: 1px solid var(--border);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      button.primary, .btn.primary {
+        border-color: #c85f2d;
+        background: linear-gradient(180deg, #f1864f, #e26c32);
+        color: #1c0f09;
+        font-weight: 600;
+      }
+
+      .body {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 75vh;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--border);
+        padding: 16px;
+        background: #131317;
+      }
+
+      .sidebar .section {
+        margin-bottom: 18px;
+      }
+
+      .sidebar h3 {
+        margin: 0 0 8px 0;
+        font-size: 0.95rem;
+      }
+
+      .sidebar ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .main {
+        position: relative;
+        background: #0f0f12;
+      }
+
+      iframe {
+        border: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 75vh;
+        display: none;
+      }
+
+      .fallback {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .card {
+        max-width: 640px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        border-radius: 14px;
+        padding: 22px;
+      }
+
+      .card h2 { margin-top: 0; }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      code {
+        background: #0e0e11;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1px 6px;
+      }
+
+      @media (max-width: 900px) {
+        .body { grid-template-columns: 1fr; }
+        .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="header">
+        <div>
+          <div class="brand"><span class="dot"></span> Claude Web Portal</div>
+          <div class="muted">Sign in with your Claude account</div>
+        </div>
+        <div class="controls">
+          <button id="embedBtn">Try Embed</button>
+          <a class="btn primary" href="https://claude.ai" target="_blank" rel="noopener noreferrer">Open Claude</a>
+        </div>
+      </header>
+
+      <section class="body">
+        <aside class="sidebar">
+          <div class="section">
+            <h3>Quick start</h3>
+            <ul>
+              <li>Click <strong>Try Embed</strong> to load Claude in-page.</li>
+              <li>If embedding is blocked by browser security headers, use <strong>Open Claude</strong>.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h3>Status</h3>
+            <p class="muted" id="status">Ready to load <code>https://claude.ai</code>.</p>
+          </div>
+        </aside>
+
+        <main class="main">
+          <iframe id="claudeFrame" title="Claude"></iframe>
+          <div class="fallback" id="fallback">
+            <div class="card">
+              <h2>Claude launcher</h2>
+              <p>
+                This page gives you a Claude-like shell and attempts to embed Claude. Note that many sites (including Claude) may block embedding
+                using <code>X-Frame-Options</code> or CSP.
+              </p>
+              <p class="muted">If embedding is blocked, open Claude directly in a new tab and sign in there.</p>
+              <div class="actions">
+                <button id="embedBtn2" class="primary">Try Embed</button>
+                <a class="btn" href="https://claude.ai" target="_blank" rel="noopener noreferrer">Open Claude in new tab</a>
+              </div>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script>
+      const frame = document.getElementById('claudeFrame');
+      const fallback = document.getElementById('fallback');
+      const statusEl = document.getElementById('status');
+
+      function tryEmbed() {
+        statusEl.textContent = 'Attempting to embed https://claude.ai ...';
+        fallback.style.display = 'grid';
+        frame.style.display = 'none';
+        frame.src = 'https://claude.ai';
+
+        const timeout = setTimeout(() => {
+          statusEl.textContent = 'Embedding is likely blocked by security headers. Use "Open Claude".';
+          fallback.style.display = 'grid';
+          frame.style.display = 'none';
+        }, 2500);
+
+        frame.onload = () => {
+          clearTimeout(timeout);
+          statusEl.textContent = 'Claude loaded in embedded view.';
+          fallback.style.display = 'none';
+          frame.style.display = 'block';
+        };
+      }
+
+      document.getElementById('embedBtn').addEventListener('click', tryEmbed);
+      document.getElementById('embedBtn2').addEventListener('click', tryEmbed);
+    </script>
+  </body>
+</html>
