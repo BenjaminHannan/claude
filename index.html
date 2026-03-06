@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Access Portal</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f0f10;
+        --panel: #17171a;
+        --panel-2: #1f1f23;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --accent: #e9753b;
+        --border: #2a2a31;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        background: radial-gradient(circle at top, #1a1a1f, var(--bg) 45%);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      .shell {
+        max-width: 1100px;
+        margin: 28px auto;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--panel);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #111114;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 18px rgba(233, 117, 59, 0.8); }
+      .muted { color: var(--muted); font-size: 0.92rem; }
+      .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+      .btn {
+        border: 1px solid var(--border);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .btn.primary {
+        border-color: #c85f2d;
+        background: linear-gradient(180deg, #f1864f, #e26c32);
+        color: #1c0f09;
+        font-weight: 600;
+      }
+      .body {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 70vh;
+      }
+      .sidebar {
+        border-right: 1px solid var(--border);
+        padding: 16px;
+        background: #131317;
+      }
+      .sidebar h3 { margin: 0 0 8px; font-size: 0.95rem; }
+      .sidebar ul { margin: 0 0 18px; padding-left: 18px; color: var(--muted); font-size: 0.9rem; }
+      .main {
+        padding: 22px;
+        background: #0f0f12;
+      }
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #15151a;
+        padding: 20px;
+        max-width: 680px;
+      }
+      .card h2 { margin-top: 0; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+      code {
+        background: #0e0e11;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1px 6px;
+      }
+      @media (max-width: 900px) {
+        .body { grid-template-columns: 1fr; }
+        .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="header">
+        <div>
+          <div class="brand"><span class="dot"></span> Claude Access Portal</div>
+          <div class="muted">Launch the official Claude interface with your own account</div>
+        </div>
+        <div class="controls">
+          <a class="btn primary" href="https://claude.ai" target="_blank" rel="noopener noreferrer">Open Claude (new tab)</a>
+          <a class="btn" href="https://claude.ai">Open Claude (same tab)</a>
+        </div>
+      </header>
+      <section class="body">
+        <aside class="sidebar">
+          <h3>How to use</h3>
+          <ul>
+            <li>Click <strong>Open Claude</strong> to use the official UI.</li>
+            <li>Sign in with your Claude account as normal.</li>
+            <li>If blocked on your managed device/network, contact your admin.</li>
+          </ul>
+          <h3>Status</h3>
+          <p class="muted" id="status">Ready.</p>
+        </aside>
+        <main class="main">
+          <div class="card">
+            <h2>Why embed was removed</h2>
+            <p>
+              The official Claude site sends frame protection headers, so browsers refuse to load it in an
+              <code>&lt;iframe&gt;</code>. This cannot be bypassed from client-side HTML/JS.
+            </p>
+            <p class="muted">
+              This portal now provides reliable launch buttons to the official Claude site instead of a broken embedded pane.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://claude.ai" target="_blank" rel="noopener noreferrer">Launch Claude now</a>
+              <button class="btn" id="copyBtn" type="button">Copy Claude URL</button>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script>
+      const statusEl = document.getElementById('status');
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText('https://claude.ai');
+          statusEl.textContent = 'Copied https://claude.ai to clipboard.';
+        } catch {
+          statusEl.textContent = 'Could not access clipboard. URL: https://claude.ai';
+        }
+      });
+    </script>
+  </body>
+</html>
