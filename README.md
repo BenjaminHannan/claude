@@ -1,6 +1,11 @@
-# Claude Web Portal
+# Claude Access Portal
 
-A small static website that provides a Claude-style shell and attempts to embed `https://claude.ai` inside an iframe.
+A simple static launcher page for opening the official Claude web app (`https://claude.ai`).
+
+## Why no embed?
+
+Claude blocks third-party iframe embedding using browser security headers (for example CSP `frame-ancestors` and/or `X-Frame-Options`).
+That means a custom website cannot reliably show the real Claude UI inside an `<iframe>`.
 
 ## Run locally
 
@@ -8,9 +13,9 @@ A small static website that provides a Claude-style shell and attempts to embed 
 python3 -m http.server 4173
 ```
 
-Then visit <http://localhost:4173>.
+Then visit <http://localhost:4173> and use one of the launch buttons.
 
-## Notes
+## Important
 
-- Embedding may fail because `claude.ai` can set anti-embedding security headers (`X-Frame-Options` and CSP `frame-ancestors`).
-- If embedding is blocked, use the **Open Claude** button to open the official site in a new tab and sign in normally.
+- This project does **not** bypass school/workplace restrictions.
+- If `https://claude.ai` is blocked on a managed network/device, ask your administrator for approved access.
